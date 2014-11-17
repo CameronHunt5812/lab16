@@ -32,7 +32,7 @@ class myApp(object):
         self.label1 = Label(root, text=self.prompt, width=len(self.prompt), bg='green')
         self.label1.pack()
 
-        self.rockets = 15
+        self.rockets = 3
         
         self.rocketsTxt = Label(root, text=str(self.rockets), width=len(str(self.rockets)), bg='green')
         self.rocketsTxt.pack()
@@ -42,28 +42,21 @@ class myApp(object):
         drawpad.pack()
         root.bind_all('<Key>', self.key)
         self.animate()
-        self.rocketAn()
     
     def animate(self):
         global drawpad
         global enemy
         global direction
-        x1,y1,x2,y2 = drawpad.coords(enemy)
-        if x2 > 800:
-            direction = - 5
-        elif x1 < 0:
-            direction = 5
-        drawpad.move(enemy, direction, 0)
-        drawpad.after(5,self.animate)
-        
-    def rocketAn(self):
-        global drawpad
-        global enemy
         global rocket
         global rocket1Fired
         x1,y1,x2,y2 = drawpad.coords(enemy)
         px1,py1,px2,py2 = drawpad.coords(player)
         rx1,ry1,rx2,ry2 = drawpad.coords(rocket1)
+        if x2 > 800:
+            direction = - 5
+        elif x1 < 0:
+            direction = 5
+        drawpad.move(enemy, direction, 0)
         if rocket1Fired == True:
             drawpad.move(rocket1,0,-5)
         hit = self.collisionDetect()
@@ -73,36 +66,33 @@ class myApp(object):
         if ry1 < 0:
             drawpad.move(rocket1,px1-rx1+10,py1-ry1+10)
             rocket1Fired = False
-        drawpad.after(5,self.rocketAn)
-        
-        
+        drawpad.after(5,self.animate)
+
     def key(self,event):
         global player
         global rocket1Fired
         px1,py1,px2,py2 = drawpad.coords(player)
-        if (self.rockets > 0) or (hit == True):
-            if event.char == "a" and px1 > 0:
-                drawpad.move(player,-4,0)
-                if rocket1Fired == False:
-                    drawpad.move(rocket1,-4,0)
-            elif event.char == "d":
-                drawpad.move(player,4,0)
-                if rocket1Fired == False:
-                    drawpad.move(rocket1,4,0)
-            elif event.char == "w": 
-                drawpad.move(player,0,-4)
-                if rocket1Fired == False:
-                    drawpad.move(rocket1,0,-4)
-            elif event.char == "s" and py2 < 600:
-                drawpad.move(player,0,4)
-                if rocket1Fired == False:
-                    drawpad.move(rocket1,0,4)
-            elif event.char == " " and rocket1Fired == False:
-                rocket1Fired = True
-                self.rockets = self.rockets -1
-                self.rocketsTxt.configure(text=str(self.rockets))
-                print 'fire!'
-                
+        if event.char == "a" and px1 > 0:
+            drawpad.move(player,-4,0)
+            if rocket1Fired == False:
+                drawpad.move(rocket1,-4,0)
+        elif event.char == "d":
+            drawpad.move(player,4,0)
+            if rocket1Fired == False:
+                drawpad.move(rocket1,4,0)
+        elif event.char == "w": 
+            drawpad.move(player,0,-4)
+            if rocket1Fired == False:
+                drawpad.move(rocket1,0,-4)
+        elif event.char == "s" and py2 < 600:
+            drawpad.move(player,0,4)
+            if rocket1Fired == False:
+                drawpad.move(rocket1,0,4)
+        elif event.char == " ":
+            rocket1Fired = True
+            self.rockets = self.rockets -1
+            self.rocketsTxt.configure(text=str(self.rockets))
+    
     def collisionDetect(self):
         global enemy
         global rocket1
